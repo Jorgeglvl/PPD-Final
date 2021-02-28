@@ -14,8 +14,8 @@ public class Spy extends JFrame{
     private JLabel jl_title;
     private JEditorPane messages;
     private JTextField jt_message;
-    private JButton jb_add;
-    private JPanel panel;
+    private JButton jb_add, jb_remove;
+    private JPanel panel, jp_buttons;
     private JScrollPane scroll;
 
     private String title;
@@ -38,7 +38,9 @@ public class Spy extends JFrame{
         scroll = new JScrollPane(messages);
         jt_message = new JTextField();
         jb_add = new JButton("Adicionar");
+        jb_remove = new JButton("Remover");
         panel = new JPanel(new BorderLayout());
+        jp_buttons = new JPanel(new BorderLayout());
 
     }
 
@@ -61,11 +63,17 @@ public class Spy extends JFrame{
         this.add(scroll, BorderLayout.CENTER);
         this.add(panel, BorderLayout.SOUTH);
         panel.add(jt_message, BorderLayout.CENTER);
-        panel.add(jb_add, BorderLayout.EAST);
+        
+        jp_buttons.add(jb_add, BorderLayout.WEST);
+        jp_buttons.add(jb_remove, BorderLayout.EAST);
+        
+        panel.add(jp_buttons, BorderLayout.EAST);
+
     } 
     
     private void insertActions(){
         jb_add.addActionListener(event -> addSuspeita(jt_message.getText()));
+        jb_remove.addActionListener(event -> removeSuspeita(jt_message.getText()));
         jt_message.addKeyListener(new KeyListener(){
             public void keyTyped(KeyEvent e){
 
@@ -82,11 +90,12 @@ public class Spy extends JFrame{
 
     }
 
-    public void addSuspeita(String received){
-    	if(message_list.contains(received)) {
-    		System.out.println("já tem");
+    private void addSuspeita(String text){
+    	text = text.toUpperCase();
+    	if(message_list.contains(text)) {
+    		JOptionPane.showMessageDialog(null,"Essa palavra já é suspeita");
     	} else {
-    		message_list.add(received);
+    		message_list.add(text);
     		String message = "";
 		    for(String str : message_list){
 		        message += str;
@@ -95,13 +104,22 @@ public class Spy extends JFrame{
 		    messages.setText(message);
     	}
     	jt_message.setText("");
-        System.out.println(message_list);        
     }
-
-    public void verify(String message){
-    	System.out.println("Espiando: " + message);
-    	System.out.println(message_list);
-//    	System.out.println(string.toLowerCase().contains(substring.toLowerCase()));
+    
+    private void removeSuspeita(String text){
+    	text = text.toUpperCase();
+    	if(message_list.contains(text)) {
+    		message_list.remove(text);
+    		String message = "";
+		    for(String str : message_list){
+		        message += str;
+		        message += "<br>";
+		    }
+		    messages.setText(message);
+    	} else {
+    		JOptionPane.showMessageDialog(null,"Essa palavra não é suspeita");
+    		}
+    	jt_message.setText("");
     }
 
     private void start(){

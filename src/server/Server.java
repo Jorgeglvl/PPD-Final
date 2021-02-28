@@ -26,7 +26,7 @@ public class Server {
             server = new ServerSocket(PORT);
             spy = Spy.getINSTANCE();
             JOptionPane.showMessageDialog(null,
-            "Servidor iniciado no host:" + HOST + " e porta:" + PORT);
+            "Servidor iniciado! Use a janela do espião para determinas as mensagens suspeitas!");
             while(true){
                 Socket connection = server.accept();
                 connection_info = Utils.receiveMessage(connection);
