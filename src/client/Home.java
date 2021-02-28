@@ -158,23 +158,24 @@ public class Home extends JFrame {
         jlist.setListData(connected_users.toArray());
     }
     
-    private void findSuspectWords() {
-        Utils.sendMessage(connection, "FIND_SUSPECT_WORDS");
+    private void getSuspectWords() {
+        Utils.sendMessage(connection, "GET_SUSPECT_WORDS");
         String response = Utils.receiveMessage(connection);
         suspect_words.clear();
         for (String word : response.split(";")) {
         	suspect_words.add(word);
         }
-        suspect_words.toArray();
-        System.out.println(suspect_words);
-    	
+        suspect_words.toArray();    	
     }
     
     public void verify(String message) {
-    	this.findSuspectWords();
-    	
-    	//verificar se há palavras suspeitas na mensagem
-        Utils.sendMessage(connection, "SUSPECT;" + message);  	
+    	this.getSuspectWords();    	
+    	for(String word : suspect_words) {
+    		if(message.toLowerCase().contains(word.toLowerCase())) {
+    	        Utils.sendMessage(connection, "SUSPECT;" + message);
+    	        break;
+    		}
+    	}
     }
 
     private void openChat() {

@@ -1,4 +1,4 @@
-package common;
+package server;
 
 import java.awt.*;
 import java.awt.event.*;

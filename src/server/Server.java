@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import common.Spy;
 import common.Utils;
 
 public class Server {

@@ -1,8 +1,8 @@
 package client;
 
-import common.Spy;
 import common.Utils;
 import server.Server;
+import server.Spy;
 
 import java.awt.*;
 import javax.swing.*;

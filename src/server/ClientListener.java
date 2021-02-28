@@ -48,7 +48,7 @@ public class ClientListener implements Runnable {
                     response += (pair.getKey() + ";");
                 }
                 Utils.sendMessage(connection, response);
-            } else if(message.equals("FIND_SUSPECT_WORDS")) {
+            } else if(message.equals("GET_SUSPECT_WORDS")) {
             	String response = "";
             	for(String word : server.getSuspectList()) {
             		response += (word + ";");
@@ -64,7 +64,7 @@ public class ClientListener implements Runnable {
 	                		if(i>1) msg += ";";
 	                	}
 	                	//Pedir para o espião mandar mesnsagens ao tópico
-	                	System.out.println(msg);
+	                	System.out.println("Mensagem Suspeita: " + msg);
 	            	}	
             	}
             }
