@@ -73,7 +73,12 @@ public class Spy extends UnicastRemoteObject implements RMIconnection{
 			}
         }
 		
-		spyFrame = new SpyFrame();		
+		spyFrame = new SpyFrame(this);		
+	}
+	
+	public void notifySuspect() throws RemoteException {
+		System.out.println("Suspect -> Spy");
+		this.partner.notifySuspect();
 	}
 	
 	public ArrayList<String> getSuspectList(){

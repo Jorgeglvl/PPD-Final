@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.rmi.RemoteException;
 import java.util.Map;
 
 import common.Utils;
@@ -63,8 +64,12 @@ public class ClientListener implements Runnable {
 	                		msg += fields[i];
 	                		if(i>1) msg += ";";
 	                	}
-	                	//Pedir para o espião mandar mesnsagens ao tópico
-	                	System.out.println("Mensagem Suspeita: " + msg);
+	                	try {
+							this.server.suspect(msg);
+						} catch (RemoteException e) {
+		                    System.err.println("[ClientListener:Notigy] -> " + e.getMessage());
+							e.printStackTrace();
+						}
 	            	}	
             	}
             }

@@ -8,4 +8,6 @@ import java.rmi.RemoteException;
 public interface RMIconnection extends Remote{
     public void connect() throws RemoteException, MalformedURLException, NotBoundException;
     public void stopWaiting() throws RemoteException;
+    public void notifySuspect()throws RemoteException ;
+    
 }

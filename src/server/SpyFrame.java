@@ -2,8 +2,6 @@ package server;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
 
@@ -18,7 +16,7 @@ public class SpyFrame extends JFrame{
 
     private static ArrayList<String> message_list;
 
-    public SpyFrame(){
+    public SpyFrame(Spy spy){
         super("Espião");
         initComponents();
         configComponents();
@@ -41,7 +39,7 @@ public class SpyFrame extends JFrame{
     }
 
     private void configComponents(){
-        this.setMinimumSize(new Dimension(480, 720));
+        this.setMinimumSize(new Dimension(480, 500));
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

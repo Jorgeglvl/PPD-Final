@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +55,11 @@ public class Server {
 	
 	public ArrayList<String> getSuspectList(){
 		return spy.getSuspectList();
+	}
+	
+	public void suspect(String message) throws RemoteException {
+		System.out.println("Suspect -> Servidor");
+		spy.notifySuspect();
 	}
 
     private boolean checkLogin(String connection_info){

@@ -8,6 +8,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JOptionPane;
 
@@ -25,6 +27,8 @@ public class Mediador extends UnicastRemoteObject implements RMIconnection{
     private int port = 9999;
     
     private boolean waiting = true;
+    
+    MediadorFrame mediadorFrame;
 
 
 	protected Mediador() throws RemoteException {		
@@ -68,7 +72,15 @@ public class Mediador extends UnicastRemoteObject implements RMIconnection{
 				e.printStackTrace();
 			}
         }
+		
+		mediadorFrame = new MediadorFrame(this);
 	}
+	
+    public void notifySuspect() {
+		System.out.println("Suspect -> Mediador");
+		SimpleDateFormat df = new SimpleDateFormat("hh:mm:ss");
+		mediadorFrame.addNotification("[" + df.format(new Date()) + "] Espião: Mensagem Suspeita!");
+    }
 
     @Override
 	public void connect() throws MalformedURLException, RemoteException, NotBoundException {		
