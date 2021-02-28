@@ -49,7 +49,7 @@ public class Mediador extends UnicastRemoteObject implements RMIconnection{
 				registry = LocateRegistry.createRegistry(port);
 				registry.bind("//"+ip+":"+port+"/Server",this);				
 				System.out.println("Servidor Registrado!");
-				JOptionPane.showMessageDialog(null, "" + "Aguardando outro jogador");
+				JOptionPane.showMessageDialog(null, "" + "Aguardando resposta da outra parte");
 			} catch (Exception e2) {
 				JOptionPane.showMessageDialog(null, "" + e.getMessage());
 				e2.printStackTrace();
@@ -70,16 +70,15 @@ public class Mediador extends UnicastRemoteObject implements RMIconnection{
         }
 	}
 
-	@Override
-	public void connect() throws RemoteException, MalformedURLException, NotBoundException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
+    @Override
+	public void connect() throws MalformedURLException, RemoteException, NotBoundException {		
+		this.partner = (RMIconnection)registry.lookup("//"+ip+":"+port+"/Client");
+		System.out.println("Jogador 2 conectado");
+    }
+    
+    @Override
 	public void stopWaiting() throws RemoteException {
-		// TODO Auto-generated method stub
-		
+		waiting = false;
 	}
 
 }
