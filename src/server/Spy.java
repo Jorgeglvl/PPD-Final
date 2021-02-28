@@ -1,137 +1,94 @@
 package server;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import javax.swing.*;
+import java.net.MalformedURLException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.ConnectException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
-public class Spy extends JFrame{
+import javax.swing.JOptionPane;
+
+import RMI.RMIconnection;
+
+public class Spy extends UnicastRemoteObject implements RMIconnection{
 	
-	private static final Spy INSTANCE = new Spy();
-
-    private JLabel jl_title;
-    private JEditorPane messages;
-    private JTextField jt_message;
-    private JButton jb_add, jb_remove;
-    private JPanel panel, jp_buttons;
-    private JScrollPane scroll;
-
-    private String title;
-    private String connection_info;
-    private static ArrayList<String> message_list;
-
-    private Spy(){
-        super("Espião");
-        initComponents();
-        configComponents();
-        insertComponents();
-        insertActions();
-        start();
-    }
-
-    private void initComponents(){
-        message_list = new ArrayList<String>();
-        jl_title = new JLabel("Palavras Suspeitas:", SwingConstants.CENTER);
-        messages = new JEditorPane();
-        scroll = new JScrollPane(messages);
-        jt_message = new JTextField();
-        jb_add = new JButton("Adicionar");
-        jb_remove = new JButton("Remover");
-        panel = new JPanel(new BorderLayout());
-        jp_buttons = new JPanel(new BorderLayout());
-
-    }
-
-    private void configComponents(){
-        this.setMinimumSize(new Dimension(480, 720));
-        this.setLayout(new BorderLayout());
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        messages.setContentType("text/html");
-        messages.setEditable(false);
-
-        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        jb_add.setSize(100, 40);
-    }
-
-    private void insertComponents(){
-        this.add(jl_title, BorderLayout.NORTH);
-        this.add(scroll, BorderLayout.CENTER);
-        this.add(panel, BorderLayout.SOUTH);
-        panel.add(jt_message, BorderLayout.CENTER);
-        
-        jp_buttons.add(jb_add, BorderLayout.WEST);
-        jp_buttons.add(jb_remove, BorderLayout.EAST);
-        
-        panel.add(jp_buttons, BorderLayout.EAST);
-
-    } 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public Registry registry;
+    public RMIconnection partner;
     
-    private void insertActions(){
-        jb_add.addActionListener(event -> addSuspeita(jt_message.getText()));
-        jb_remove.addActionListener(event -> removeSuspeita(jt_message.getText()));
-        jt_message.addKeyListener(new KeyListener(){
-            public void keyTyped(KeyEvent e){
+    private String ip = "127.0.0.1";
+    private int port = 9999;
+    
+    private boolean waiting = true;
+    
+    private SpyFrame spyFrame;
 
-            }
-            public void keyPressed(KeyEvent e){
-                if(e.getKeyChar() == KeyEvent.VK_ENTER){
-                	addSuspeita(jt_message.getText());
-                }
-            }
-            public void keyReleased(KeyEvent e){
 
-            }
-        });
+	protected Spy() throws RemoteException {
+	    
+        try {
+			System.out.println("Conectando ao servidor");
+			registry = LocateRegistry.getRegistry(port);
+			registry.bind("//"+ip+":"+port+"/Client",this);			
+			System.out.println("Conectado");			
+			System.out.println("Cliente Registrado!");
+            this.partner = (RMIconnection)registry.lookup("//"+ip+":"+port+"/Server");
+			System.out.println("Jogador 1 conectado");
+			System.out.println();
+			this.partner.connect();
+			stopWaiting();
+			this.partner.stopWaiting();
+		}
+		catch (ConnectException|AlreadyBoundException e) {
+			try {
+				System.out.println("Não há servidores disponíveis");				
+				System.out.println("Registrando servidor");
+				registry = LocateRegistry.createRegistry(port);
+				registry.bind("//"+ip+":"+port+"/Server",this);				
+				System.out.println("Servidor Registrado!");
+				JOptionPane.showMessageDialog(null, "" + "Aguardando resposta da outra parte");
+			} catch (Exception e2) {
+				JOptionPane.showMessageDialog(null, "" + e.getMessage());
+				e2.printStackTrace();
+			}
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "" + e.getMessage());
+			e.printStackTrace();
+		}
 
-    }
+		while(waiting) {
+			try {
+				Thread.sleep(30);
+			} catch (InterruptedException e) {
+				JOptionPane.showMessageDialog(null, "" + e.getMessage());
+				e.printStackTrace();
+			}
+        }
+		
+		spyFrame = new SpyFrame();		
+	}
+	
+	public ArrayList<String> getSuspectList(){
+		return spyFrame.getMessage_list();
+	}
 
-    private void addSuspeita(String text){
-    	text = text.toUpperCase();
-    	if(message_list.contains(text)) {
-    		JOptionPane.showMessageDialog(null,"Essa palavra já é suspeita");
-    	} else {
-    		message_list.add(text);
-    		String message = "";
-		    for(String str : message_list){
-		        message += str;
-		        message += "<br>";
-		    }
-		    messages.setText(message);
-    	}
-    	jt_message.setText("");
+    @Override
+	public void connect() throws MalformedURLException, RemoteException, NotBoundException {		
+		this.partner = (RMIconnection)registry.lookup("//"+ip+":"+port+"/Client");
+		System.out.println("Jogador 2 conectado");
     }
     
-    private void removeSuspeita(String text){
-    	text = text.toUpperCase();
-    	if(message_list.contains(text)) {
-    		message_list.remove(text);
-    		String message = "";
-		    for(String str : message_list){
-		        message += str;
-		        message += "<br>";
-		    }
-		    messages.setText(message);
-    	} else {
-    		JOptionPane.showMessageDialog(null,"Essa palavra não é suspeita");
-    		}
-    	jt_message.setText("");
-    }
+    @Override
+	public void stopWaiting() throws RemoteException {
+		waiting = false;
+	}
 
-    private void start(){
-        this.pack();
-        this.setVisible(true);
-    }
-    
-    public ArrayList<String> getMessage_list() {
-    	return message_list;
-    }
-    
-    public static Spy getINSTANCE() {
-    	return INSTANCE;
-    }
 }

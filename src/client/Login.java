@@ -2,7 +2,7 @@ package client;
 
 import common.Utils;
 import server.Server;
-import server.Spy;
+import server.SpyFrame;
 
 import java.awt.*;
 import javax.swing.*;

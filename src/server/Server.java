@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,12 +20,12 @@ public class Server {
     private Map<String, ClientListener> clients;
     private Spy spy;
 
-	public Server(){
+	public Server() throws NotBoundException{
         try {
             String connection_info;
             clients = new HashMap<String, ClientListener>();
             server = new ServerSocket(PORT);
-            spy = Spy.getINSTANCE();
+            spy = new Spy();
             JOptionPane.showMessageDialog(null,
             "Servidor iniciado! Use a janela do espião para determinas as mensagens suspeitas!");
             while(true){
@@ -52,7 +53,7 @@ public class Server {
     }
 	
 	public ArrayList<String> getSuspectList(){
-		return spy.getMessage_list();
+		return spy.getSuspectList();
 	}
 
     private boolean checkLogin(String connection_info){
@@ -68,7 +69,7 @@ public class Server {
         return true;
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NotBoundException {
         Server server = new Server();
     }
 

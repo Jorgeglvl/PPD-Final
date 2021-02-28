@@ -27,7 +27,7 @@ public class Mediador extends UnicastRemoteObject implements RMIconnection{
     private boolean waiting = true;
 
 
-	protected Mediador() throws RemoteException, MalformedURLException, NotBoundException {		
+	protected Mediador() throws RemoteException {		
 	    
         try {
 			System.out.println("Conectando ao servidor");
@@ -80,5 +80,9 @@ public class Mediador extends UnicastRemoteObject implements RMIconnection{
 	public void stopWaiting() throws RemoteException {
 		waiting = false;
 	}
+    
+    public static void main(String[] args) throws RemoteException {
+    	Mediador mediador = new Mediador();
+    }
 
 }

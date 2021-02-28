@@ -6,13 +6,13 @@ import java.net.Socket;
 import javax.print.DocFlavor.STRING;
 
 import common.*;
-import server.Spy;
+import server.SpyFrame;
 public class ClientListener implements Runnable {
 
     private boolean running;
     private boolean isOpened;
     private Home home;
-    private Spy spy;
+    private SpyFrame spy;
     private Socket connection;
     private String connection_info;
     private Chat chat;
