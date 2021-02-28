@@ -21,8 +21,8 @@ public class Mediador extends UnicastRemoteObject implements RMIconnection{
 	public Registry registry;
     public RMIconnection partner;
     
-    private String ip;
-    private int port;
+    private String ip = "127.0.0.1";
+    private int port = 9999;
     
     private boolean waiting = true;
 
