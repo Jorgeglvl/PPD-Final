@@ -2,6 +2,8 @@ package RMI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -18,17 +20,20 @@ public class MediadorFrame extends JFrame{
     private JButton lb_clear;
     private JScrollPane scroll;
     private Mediador mediador;
+    private MediadorFrame mediadorFrame;
 
     private static ArrayList<String> notification_list;
 
     public MediadorFrame(Mediador mediador){
         super("Mediador");
+        mediadorFrame = this;
         this.mediador = mediador;
         initComponents();
         configComponents();
         insertComponents();
         insertActions();
-        start();
+        createRunnable();
+//        start();
     }
     
     private void initComponents(){
@@ -64,14 +69,20 @@ public class MediadorFrame extends JFrame{
         lb_clear.addActionListener(event -> clearNotifications());
     }
     
-    public void addNotification(String text){
-    		notification_list.add(text);
+    public void addNotification() throws RemoteException{
+		ArrayList<String> notificationsList = mediador.recebeMensagem("Monitoramento", false);
+		System.out.println(notificationsList);
+		while(!notificationsList.isEmpty()) {
+//			textUsuarios.append("Recebido de "+notificationsList.remove(0)+"\n");
+	    	System.out.println("Era pra ter mostrado");
+    		notification_list.add(notificationsList.remove(0));
     		String message = "";
 		    for(String str : notification_list){
 		        message += str;
 		        message += "<br>";
 		    }
 		    messages.setText(message);
+		}
     }
     
     public void clearNotifications() {
@@ -80,9 +91,22 @@ public class MediadorFrame extends JFrame{
     	
     }
     
-    private void start(){
-        this.pack();
-        this.setVisible(true);
-    }
+//    private void start(){
+//        this.pack();
+//        this.setVisible(true);
+//    }
+    
+	private void createRunnable() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					mediadorFrame.pack();
+					mediadorFrame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 }

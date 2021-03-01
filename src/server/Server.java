@@ -58,8 +58,9 @@ public class Server {
 	}
 	
 	public void suspect(String message) throws RemoteException {
-		System.out.println("Suspect -> Servidor");
-		spy.notifySuspect();
+		if(spy.notifySuspect(message)) {
+			System.out.println("Servidor: Mensagem enviada");
+		}
 	}
 
     private boolean checkLogin(String connection_info){

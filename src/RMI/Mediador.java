@@ -9,11 +9,14 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
 
-public class Mediador extends UnicastRemoteObject implements RMIconnection{
+import server.SpyFrame;
+
+public class Mediador extends UnicastRemoteObject implements RemoteClient{
 
 	/**
 	 * 
@@ -21,80 +24,128 @@ public class Mediador extends UnicastRemoteObject implements RMIconnection{
 	private static final long serialVersionUID = 1L;
 	
 	public Registry registry;
-    public RMIconnection partner;
+	private RemoteServer server;
     
     private String ip = "127.0.0.1";
     private int port = 9999;
-    
-    private boolean waiting = true;
+    private String nickname = "Mediador";
+
     
     MediadorFrame mediadorFrame;
 
 
 	protected Mediador() throws RemoteException {		
 	    
-        try {
-			System.out.println("Conectando ao servidor");
+		
+		try {
 			registry = LocateRegistry.getRegistry(port);
-			registry.bind("//"+ip+":"+port+"/Client",this);			
-			System.out.println("Conectado");			
-			System.out.println("Cliente Registrado!");
-            this.partner = (RMIconnection)registry.lookup("//"+ip+":"+port+"/Server");
-			System.out.println("Jogador 1 conectado");
-			System.out.println();
-			this.partner.connect();
-			stopWaiting();
-			this.partner.stopWaiting();
-		}
-		catch (ConnectException|AlreadyBoundException e) {
-			try {
-				System.out.println("Não há servidores disponíveis");				
-				System.out.println("Registrando servidor");
-				registry = LocateRegistry.createRegistry(port);
-				registry.bind("//"+ip+":"+port+"/Server",this);				
-				System.out.println("Servidor Registrado!");
-				JOptionPane.showMessageDialog(null, "" + "Aguardando resposta da outra parte");
-			} catch (Exception e2) {
-				JOptionPane.showMessageDialog(null, "" + e.getMessage());
-				e2.printStackTrace();
-			}
+			server = (RemoteServer)registry.lookup("//"+ip+":"+port+"/Servidor");
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "" + e.getMessage());
+			JOptionPane.showMessageDialog(null, "Não foi possivel conectar com o servidor");
 			e.printStackTrace();
+			System.exit(0);
 		}
-
-		while(waiting) {
-			try {
-				Thread.sleep(30);
-			} catch (InterruptedException e) {
-				JOptionPane.showMessageDialog(null, "" + e.getMessage());
-				e.printStackTrace();
-			}
-        }
 		
-		mediadorFrame = new MediadorFrame(this);
+		this.connect();
+		mediadorFrame = new MediadorFrame(this);	
+		this.recebeMensagem("Monitoramento", false);
+		notificaMensagem();
 	}
 	
-    public void notifySuspect() {
-		System.out.println("Suspect -> Mediador");
-		SimpleDateFormat df = new SimpleDateFormat("hh:mm:ss");
-		mediadorFrame.addNotification("[" + df.format(new Date()) + "] Espião: Mensagem Suspeita!");
-    }
-
-    @Override
-	public void connect() throws MalformedURLException, RemoteException, NotBoundException {		
-		this.partner = (RMIconnection)registry.lookup("//"+ip+":"+port+"/Client");
-		System.out.println("Jogador 2 conectado");
-    }
-    
-    @Override
-	public void stopWaiting() throws RemoteException {
-		waiting = false;
+	public boolean connect(){
+		
+		try {
+			
+			if(this.nickname!=null) {
+				int resposta = server.conectaUsuario(this);
+				if(resposta==-1) {
+					JOptionPane.showMessageDialog(null, "Client '"+nickname+"' ja está conectado");
+				}
+				else {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
-    
-    public static void main(String[] args) throws RemoteException {
-    	Mediador mediador = new Mediador();
-    }
+	public boolean enviaMensagem(String nickname, String conteudoMsg, boolean tipoFila) {
+		
+		try {
+			if(tipoFila) {
+				if(!server.produzMensagemFila(nickname, conteudoMsg)) {
+					JOptionPane.showMessageDialog(null, "Usuario nao existe");
+					return false;
+				}
+			}
+			else {
+				if(!server.produzMensagemTopico(nickname, conteudoMsg)) {
+					JOptionPane.showMessageDialog(null, "Topico nao existe");
+					return false;
+				}
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	public ArrayList<String> recebeMensagem(String nickname, boolean tipoFila) {
+		
+		try {
+			if(tipoFila) {
+				return server.recebeMensagemFila(nickname);
+			}
+			else {
+				if(!server.assinaTopico(nickname, this.nickname)) {
+//					de boa
+				}
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<String>();
+	}
+	
+	public void notificaMensagem() throws RemoteException {
+		mediadorFrame.addNotification();
+	}
+	
+	public void notificaDesconexao() throws RemoteException {
+		JOptionPane.showMessageDialog(null, "VocÃª foi desconectado");
+		System.exit(0);
+	}
+	
+	public void setMensagemTopico(String mensagem) throws RemoteException {
+//		janela.escreveMensagensTopico(mensagem);
+	}
+	
+	public ArrayList<String> getClients() {
+		try {
+			return server.getUsuariosOnline();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<String>();
+	}
+	
+	public ArrayList<String> getTopics() {
+		try {
+			return server.getTopicosDisponiveis();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<String>();
+	}
+	
+	public String getNome() throws RemoteException {
+		return nickname;
+	}
+	
+	public static void main(String[] args) throws RemoteException {
+		Mediador mediador = new Mediador();
+		}
 
 }

@@ -1,9 +1,4 @@
-package server;
-
-import java.net.MalformedURLException;
-import java.rmi.AlreadyBoundException;
-import java.rmi.ConnectException;
-import java.rmi.NotBoundException;
+package RMI;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -12,45 +7,34 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import RMI.RemoteClient;
-import RMI.RemoteServer;
 
-public class Spy extends UnicastRemoteObject implements RemoteClient{
+public class Client extends UnicastRemoteObject implements RemoteClient {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	public Registry registry;
+	private Registry registro;
 	private RemoteServer server;
-    
-    private String ip = "127.0.0.1";
-    private int port = 9999;
-    private String nickname = "Espi�o";
-        
-    private SpyFrame spyFrame;
-
-
-	protected Spy() throws RemoteException {
+//	private Home janela;
+	private String host;
+	private int porta;
+	
+	public String nickname;
+	
+	public Client(String ip, int port, String nickname) throws RemoteException{
+//		this.janela = janela;
+		
+		host = ip;
+		porta = port;
+		this.nickname = nickname;
 		
 		try {
-			registry = LocateRegistry.getRegistry(port);
-			server = (RemoteServer)registry.lookup("//"+ip+":"+port+"/Servidor");
+			registro = LocateRegistry.getRegistry(porta);
+			server = (RemoteServer)registro.lookup("//"+host+":"+porta+"/Servidor");
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Não foi possivel conectar com o servidor");
 			e.printStackTrace();
 			System.exit(0);
 		}
-		
-		this.connect();
-		spyFrame = new SpyFrame(this);
-		this.recebeMensagem("Monitoramento", false);
-
-	}
-	
-	public ArrayList<String> getSuspectList() {
-		return spyFrame.getMessage_list();
 	}
 	
 	public boolean connect(){
@@ -60,7 +44,7 @@ public class Spy extends UnicastRemoteObject implements RemoteClient{
 			if(this.nickname!=null) {
 				int resposta = server.conectaUsuario(this);
 				if(resposta==-1) {
-					JOptionPane.showMessageDialog(null, "Client '"+nickname+"' ja est� conectado");
+					JOptionPane.showMessageDialog(null, "Client '"+nickname+"' ja está conectado");
 				}
 				else {
 					return true;
@@ -71,7 +55,7 @@ public class Spy extends UnicastRemoteObject implements RemoteClient{
 		}
 		return false;
 	}
-
+	
 	public boolean enviaMensagem(String nickname, String conteudoMsg, boolean tipoFila) {
 		
 		try {
@@ -101,7 +85,7 @@ public class Spy extends UnicastRemoteObject implements RemoteClient{
 			}
 			else {
 				if(!server.assinaTopico(nickname, this.nickname)) {
-//					j� inscrito
+					JOptionPane.showMessageDialog(null, "Você já está inscrito");
 				}
 			}
 		} catch (RemoteException e) {
@@ -111,17 +95,16 @@ public class Spy extends UnicastRemoteObject implements RemoteClient{
 	}
 	
 	public void notificaMensagem() throws RemoteException {
-		ArrayList<String> notificationsList = this.recebeMensagem("Monitoramento", false);
-		System.out.println(notificationsList);
+//		janela.recebeMensagensUsuarios();
 	}
 	
 	public void notificaDesconexao() throws RemoteException {
-		JOptionPane.showMessageDialog(null, "Voce foi desconectado");
+		JOptionPane.showMessageDialog(null, "Você foi desconectado");
 		System.exit(0);
 	}
 	
 	public void setMensagemTopico(String mensagem) throws RemoteException {
-		System.out.println("Spy: setMensagemTopico");
+//		janela.escreveMensagensTopico(mensagem);
 	}
 	
 	public ArrayList<String> getClients() {
@@ -145,9 +128,4 @@ public class Spy extends UnicastRemoteObject implements RemoteClient{
 	public String getNome() throws RemoteException {
 		return nickname;
 	}
-	
-	public boolean notifySuspect(String message) {
-		return this.enviaMensagem("Monitoramento", "Monitoramento"+"<"+this.nickname+": "+message, false);
-	}
-
 }

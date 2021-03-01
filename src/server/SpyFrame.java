@@ -13,16 +13,19 @@ public class SpyFrame extends JFrame{
     private JButton jb_add, jb_remove;
     private JPanel panel, jp_buttons;
     private JScrollPane scroll;
+    private SpyFrame spyFrame;
 
     private static ArrayList<String> message_list;
 
     public SpyFrame(Spy spy){
         super("Espião");
+        spyFrame = this;
         initComponents();
         configComponents();
         insertComponents();
         insertActions();
-        start();
+		createRunnable();
+//        start();
     }
 
     private void initComponents(){
@@ -116,13 +119,26 @@ public class SpyFrame extends JFrame{
     	jt_message.setText("");
     }
 
-    private void start(){
-        this.pack();
-        this.setVisible(true);
-    }
+//    private void start(){
+//        this.pack();
+//        this.setVisible(true);
+//    }
     
     public ArrayList<String> getMessage_list() {
     	return message_list;
     }
+    
+	private void createRunnable() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					spyFrame.pack();
+					spyFrame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
     
 }
