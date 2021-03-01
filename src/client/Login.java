@@ -30,13 +30,13 @@ class Login extends JFrame{
         jb_login = new JButton("Entrar");
         jl_user = new JLabel("Apelido", SwingConstants.CENTER);
         jl_port = new JLabel("Porta", SwingConstants.CENTER);
-        jl_title = new JLabel("");
+        jl_title = new JLabel("Chat Sockets");
         jt_user = new JTextField();
         jt_port = new JTextField();
 
-//        jl_title.setBounds(10, 10, 375, 100);
-//        ImageIcon icon = new ImageIcon(getClass().getResource("/logo.png"));
-//        jl_title.setIcon(new ImageIcon(icon.getImage().getScaledInstance(365, 100,  Image.SCALE_SMOOTH)));
+        jl_title.setBounds(85, 10, 375, 100);
+        jl_title.setFont(new Font("Serif", Font.PLAIN, 42));
+        jl_title.setForeground(Color.ORANGE);
 
         jb_login.setBounds(10, 220, 375, 40);
 
