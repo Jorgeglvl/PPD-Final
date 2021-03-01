@@ -25,7 +25,6 @@ public class SpyFrame extends JFrame{
         insertComponents();
         insertActions();
 		createRunnable();
-//        start();
     }
 
     private void initComponents(){
@@ -118,11 +117,6 @@ public class SpyFrame extends JFrame{
     		}
     	jt_message.setText("");
     }
-
-//    private void start(){
-//        this.pack();
-//        this.setVisible(true);
-//    }
     
     public ArrayList<String> getMessage_list() {
     	return message_list;

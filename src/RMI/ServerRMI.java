@@ -48,7 +48,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public void connectBroker() {
-		System.out.println("connectBroker");
 		try {
 			conexao = ActiveMQConnection.makeConnection(url);
 			conexao.start();
@@ -58,8 +57,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public void disconnectBroker() {
-		System.out.println("disconnectBroker");
-
 		try {
 			conexao.close();
 		} catch (Exception e) {
@@ -68,8 +65,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public int conectaUsuario(RemoteClient usuario) throws RemoteException {
-		System.out.println("connectUsuario");
-
 		String nome = usuario.getNome();
 		boolean filaExiste = verificaFilaExiste(nome);
 		int usuarioExiste = verificaUsuarioExiste(nome);
@@ -92,8 +87,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public int verificaUsuarioExiste(String nome) {
-		System.out.println("verificaUsuarioExiste");
-
 		int i = 0;
 		
 		if(!getListaUsuario().isEmpty()) {
@@ -113,8 +106,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public boolean verificaFilaExiste(String nomeFila) {
-		System.out.println("verificaFilaExiste");
-
 		ArrayList<String> nomeFilas = getFilas();
 		int i;
 		
@@ -128,8 +119,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public boolean verificaTopicoExiste(String nomeTopico) {
-		System.out.println("verificaTopicoExiste");
-
 		ArrayList<String> nomeTopicos = getTopicos();
 		int i;
 		
@@ -143,20 +132,14 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public void reconectaUsuario(RemoteClient usuario) {
-		System.out.println("reconectaUsuario");
-
 		criaUsuario(usuario);
 	}
 	
 	public void criaUsuario(RemoteClient usuario) {
-		System.out.println("criaUsuario");
-
 		getListaUsuario().add(usuario);
 	}
 	
 	public boolean criaFila(String nomeFila) {
-		System.out.println("criaFila");
-
 		connectBroker();
 		
 		try {
@@ -175,8 +158,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public boolean criaTopico(String nomeTopico) {
-		System.out.println("criaTopico");
-
 		connectBroker();
 		
 		try {
@@ -196,8 +177,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public void removeFila(String nomeFila) {
-		System.out.println("removeFila");
-
 		connectBroker();
 		
 		try {
@@ -214,8 +193,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public void removeTopico(String nomeTopico) {
-		System.out.println("removeTopico");
-
 		connectBroker();
 		
 		try {
@@ -228,8 +205,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public ArrayList<String> getFilas() {
-		System.out.println("getFilas");
-
 		ArrayList<String> nomeFilas = new ArrayList<String>();
 		
 		connectBroker();
@@ -253,8 +228,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public ArrayList<String> getUsuariosOnline() throws RemoteException {
-		System.out.println("getUsuariosOnline");
-
 		ArrayList<String> listaUsuarioOn = new ArrayList<String>();
 		ArrayList<String> listaFilas = getFilas();
 		String nome;
@@ -281,8 +254,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 
 	public int getQuantidadeMsg(String nomeFila) {
-		System.out.println("getQuantidadeMsg");
-
 		int k = 0;
 		
 		connectBroker();
@@ -310,8 +281,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public ArrayList<String> getTopicos() {
-		System.out.println("getTopicos");
-
 		ArrayList<String> nomeTopicos = new ArrayList<String>();
 		
 		connectBroker();
@@ -334,14 +303,10 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public ArrayList<String> getTopicosDisponiveis() throws RemoteException {
-		System.out.println("getTopicosDisponiveis");
-
 		return getTopicos();
 	}
 	
 	public boolean produzMensagemFila(String nomeFila, String conteudoMsg) throws RemoteException {
-		System.out.println("produzMensagemFila");
-
 		if(!verificaFilaExiste(nomeFila)) {
 			return false;
 		}
@@ -378,8 +343,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public boolean produzMensagemTopico(String nomeTopico, String conteudoMsg) throws RemoteException {
-		System.out.println("produzMensagemTopico");
-
 		if(!verificaTopicoExiste(nomeTopico)) {
 			return false;
 		}
@@ -404,7 +367,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public ArrayList<String> recebeMensagemFila(String nomeFila) throws RemoteException {
-		System.out.println("recebeMensagemFila");
 
 		ArrayList<String> listaMensagem = new ArrayList<String>();
 		
@@ -449,8 +411,6 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 	
 	public boolean assinaTopico(String nomeTopico, String nomeUsuario) throws RemoteException {
-		System.out.println("assinaTopico");
-
 		for(int i=0;i<listaAssinates.size();i++) {
 			if(listaAssinates.get(i).getNomeUsuario().contentEquals(nomeUsuario)&&listaAssinates.get(i).getNomeTopico().contentEquals(nomeTopico)) {
 				return false;
@@ -461,14 +421,10 @@ public class ServerRMI extends UnicastRemoteObject implements RemoteServer {
 	}
 
 	public ArrayList<RemoteClient> getListaUsuario() {
-		System.out.println("getListaUsuario");
-
 		return listaUsuario;
 	}
 
 	public void setListaUsuario(ArrayList<RemoteClient> listaUsuario) {
-		System.out.println("setListaUsuario");
-
 		this.listaUsuario = listaUsuario;
 	}
 	

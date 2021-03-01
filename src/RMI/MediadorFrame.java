@@ -70,7 +70,6 @@ public class MediadorFrame extends JFrame{
     }
     
     public void addNotification(String mensagem) throws RemoteException{
-//		textUsuarios.append("Recebido de "+notificationsList.remove(0)+"\n");
     	notification_list.add(mensagem);
     	String message = "";
 		for(String str : notification_list){

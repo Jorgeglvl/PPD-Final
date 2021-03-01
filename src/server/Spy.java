@@ -112,7 +112,6 @@ public class Spy extends UnicastRemoteObject implements RemoteClient{
 	
 	public void notificaMensagem() throws RemoteException {
 		ArrayList<String> notificationsList = this.recebeMensagem("Monitoramento", false);
-		System.out.println(notificationsList);
 	}
 	
 	public void notificaDesconexao() throws RemoteException {
