@@ -110,7 +110,7 @@ public class Mediador extends UnicastRemoteObject implements RemoteClient{
 	}
 	
 	public void notificaMensagem() throws RemoteException {
-		mediadorFrame.addNotification();
+//		mediadorFrame.addNotification();
 	}
 	
 	public void notificaDesconexao() throws RemoteException {
@@ -119,7 +119,7 @@ public class Mediador extends UnicastRemoteObject implements RemoteClient{
 	}
 	
 	public void setMensagemTopico(String mensagem) throws RemoteException {
-//		janela.escreveMensagensTopico(mensagem);
+		mediadorFrame.addNotification(mensagem);
 	}
 	
 	public ArrayList<String> getClients() {

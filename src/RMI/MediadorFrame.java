@@ -69,20 +69,15 @@ public class MediadorFrame extends JFrame{
         lb_clear.addActionListener(event -> clearNotifications());
     }
     
-    public void addNotification() throws RemoteException{
-		ArrayList<String> notificationsList = mediador.recebeMensagem("Monitoramento", false);
-		System.out.println(notificationsList);
-		while(!notificationsList.isEmpty()) {
-//			textUsuarios.append("Recebido de "+notificationsList.remove(0)+"\n");
-	    	System.out.println("Era pra ter mostrado");
-    		notification_list.add(notificationsList.remove(0));
-    		String message = "";
-		    for(String str : notification_list){
-		        message += str;
-		        message += "<br>";
-		    }
-		    messages.setText(message);
+    public void addNotification(String mensagem) throws RemoteException{
+//		textUsuarios.append("Recebido de "+notificationsList.remove(0)+"\n");
+    	notification_list.add(mensagem);
+    	String message = "";
+		for(String str : notification_list){
+		    message += str;
+		    message += "<br>";
 		}
+		messages.setText(message);
     }
     
     public void clearNotifications() {

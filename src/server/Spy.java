@@ -147,7 +147,7 @@ public class Spy extends UnicastRemoteObject implements RemoteClient{
 	}
 	
 	public boolean notifySuspect(String message) {
-		return this.enviaMensagem("Monitoramento", "Monitoramento"+"<"+this.nickname+": "+message, false);
+		return this.enviaMensagem("Monitoramento", "Monitoramento"+"<Servidor: "+message, false);
 	}
 
 }
